@@ -155,4 +155,77 @@ router.delete('/', auth, async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+//@route  PUT api/profile/expierence
+//@desc   Add profile experience
+//@access Private
+
+router.put(
+  '/experience',
+  [
+    auth,
+    [check('title', 'Title is required').not().isEmpty()],
+    [check('company', 'Company is required').not().isEmpty()],
+    [check('from', 'From date is required').not().isEmpty()],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    const {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    } = req.body;
+
+    const newExp = {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    try {
+      // find existing profile in database by user id from token
+      const profile = await Profile.findOne({ user: req.user.id });
+      // add array to unshift to the beginning to capture most recent
+      profile.experience.unshift(newExp);
+      await profile.save();
+      //return the updated profile
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+//@route  DELETE api/profile/expierence/:exp_id
+//@desc   Delete profile experience
+//@access Private
+router.delete('/experience/:exp_id', auth, async (req, res) => {
+  try {
+    // get the profile of the logged in user
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Get remove index that matches the experience id
+    const removeIndex = profile.experience
+      .map((item) => item.id)
+      .indexOf(req.params.exp_id);
+    // remove the experience
+    profile.experience.splice(removeIndex, 1);
+    await profile.save();
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 module.exports = router;
