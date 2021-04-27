@@ -219,8 +219,97 @@ router.delete('/experience/:exp_id', auth, async (req, res) => {
     const removeIndex = profile.experience
       .map((item) => item.id)
       .indexOf(req.params.exp_id);
+    // check to see if experience id exists
+    if (removeIndex === -1) {
+      return res.status(400).json({
+        msg: 'No such entity',
+      });
+    }
     // remove the experience
     profile.experience.splice(removeIndex, 1);
+    await profile.save();
+    res.json(profile);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+//@route  PUT api/profile/education
+//@desc   Add profile education
+//@access Private
+router.put(
+  '/education',
+  [
+    auth,
+    [check('school', 'School is required').not().isEmpty()],
+    [check('degree', 'Degree is required').not().isEmpty()],
+    [check('fieldofstudy', 'Field of Study is required').not().isEmpty()],
+    [check('from', 'From date is required').not().isEmpty()],
+  ],
+  async (req, res) => {
+    // check for errors in req body
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    // desctructure the eduction req body
+    const {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description,
+    } = req.body;
+
+    // capture new values for updated education
+    const newEdu = {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    try {
+      // find existing profile in database by user id from token
+      const profile = await Profile.findOne({ user: req.user.id });
+      // add array to unshift to the beginning to capture most recent
+      profile.education.unshift(newEdu);
+      await profile.save();
+      //return the updated profile
+      res.json(profile);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+//@route  DELETE api/profile/education/:edu_id
+//@desc   Delete profile education
+//@access Private
+router.delete('/education/:edu_id', auth, async (req, res) => {
+  try {
+    // get the profile of the logged in user
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    // Get remove index that matches the experience id
+    const removeIndex = profile.education
+      .map((item) => item.id)
+      .indexOf(req.params.edu_id);
+    // check to see if education id exists
+    if (removeIndex === -1) {
+      return res.status(400).json({
+        msg: 'No such entity',
+      });
+    }
+    // remove the experience
+    profile.education.splice(removeIndex, 1);
     await profile.save();
     res.json(profile);
   } catch (err) {
