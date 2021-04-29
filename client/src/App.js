@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
-import data from './data';
-import List from './List';
-function App() {
-  const [people, setPeople] = useState(data);
+import React, { Fragment } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Navbar from './components/layout/Navbar';
+import Landing from './components/layout/Landing';
+import Register from './components/auth/Register';
+import Login from './components/auth/Login';
 
-  return (
-    <main>
+const App = () => (
+  <Router>
+    <Fragment>
+      <Navbar />
+      <Route exact path='/' component={Landing} />
       <section className='container'>
-        <h3>{people.length} Birthdays today</h3>
-        <List people={people} />
-        <button onClick={() => setPeople([])}>Clear All</button>
+        <switch>
+          <Route exact path='/register' component={Register}></Route>
+          <Route exact path='/login' component={Login}></Route>
+        </switch>
       </section>
-    </main>
-  );
-}
+    </Fragment>
+  </Router>
+);
 
 export default App;
