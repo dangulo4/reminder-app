@@ -1,7 +1,10 @@
 import React, { Fragment, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { setAlert } from '../../actions/alert';
+import PropTypes from 'prop-types';
 
-const Register = () => {
+const Register = (props) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -15,44 +18,44 @@ const Register = () => {
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     if (name === '' || email === '' || password === '') {
       //setAlert
-      console.log('missing fields');
+      props.setAlert('name and password are required fields', 'danger');
     } else if (password !== password2) {
       //setAlert
-      console.log('password doesnt match');
+      props.setAlert('password doesnt match', 'danger');
     } else {
-      console.log(formData);
+      console.log('SUCCESS');
     }
   };
 
   return (
     <Fragment>
-      <h1 className='large text-primary'>Sign Up</h1>
+      <h1 className='large text-primary'>Join Our Community</h1>
       <p className='lead'>
         <i className='fas fa-user'></i> Register an Account
       </p>
       <form className='form' onSubmit={onSubmit}>
         <div className='form-group'>
+          <label htmlFor='name'>Name</label>
           <input
             type='text'
-            placeholder='Name'
+            placeholder='Enter First and Last Name'
             name='name'
             value={name}
             onChange={onChange}
-            required
           />
         </div>
         <div className='form-group'>
+          <label htmlFor='email'>Email Address</label>
           <input
             type='email'
             placeholder='Email Address'
             name='email'
             value={email}
             onChange={onChange}
-            required
           />
           <small className='form-text'>
             This site uses Gravatar so if you want a profile image, use a
@@ -60,9 +63,10 @@ const Register = () => {
           </small>
         </div>
         <div className='form-group'>
+          <label htmlFor='password'>Password</label>
           <input
             type='password'
-            placeholder='Password'
+            placeholder='Password must be at least 6 characters'
             name='password'
             value={password}
             onChange={onChange}
@@ -70,9 +74,10 @@ const Register = () => {
           />
         </div>
         <div className='form-group'>
+          <label htmlFor='password2'>Re-Enter Password</label>
           <input
             type='password'
-            placeholder='Confirm Password'
+            placeholder=''
             name='password2'
             value={password2}
             onChange={onChange}
@@ -88,4 +93,8 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+};
+
+export default connect(null, { setAlert })(Register);
