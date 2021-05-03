@@ -15,7 +15,7 @@ router.get('/me', auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.user.id,
-    }).populate('user', ['name', avatar]);
+    }).populate('user', ['name', 'avatar']);
     // check if no profile
     if (!profile) {
       return res.status(400).json({ msg: 'There is no profile for that user' });
@@ -23,7 +23,7 @@ router.get('/me', auth, async (req, res) => {
     res.json(profile);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send('Server Error API Route');
   }
 });
 
