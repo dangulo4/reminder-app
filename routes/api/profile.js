@@ -67,7 +67,10 @@ router.post(
     if (status) profileFields.status = status;
     if (githubusername) profileFields.githubusername = githubusername;
     if (skills) {
-      profileFields.skills = skills.split(',').map((skill) => skill.trim());
+      profileFields.skills = skills
+        .toString()
+        .split(',')
+        .map((skill) => skill.trim());
     }
     // build social object
     profileFields.social = {};
@@ -175,15 +178,8 @@ router.put(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    const {
-      title,
-      company,
-      location,
-      from,
-      to,
-      current,
-      description,
-    } = req.body;
+    const { title, company, location, from, to, current, description } =
+      req.body;
 
     const newExp = {
       title,
@@ -256,15 +252,8 @@ router.put(
       return res.status(400).json({ errors: errors.array() });
     }
     // desctructure the eduction req body
-    const {
-      school,
-      degree,
-      fieldofstudy,
-      from,
-      to,
-      current,
-      description,
-    } = req.body;
+    const { school, degree, fieldofstudy, from, to, current, description } =
+      req.body;
 
     // capture new values for updated education
     const newEdu = {
