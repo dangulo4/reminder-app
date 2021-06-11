@@ -12,7 +12,7 @@ const Landing = ({ isAuthenticated }) => {
     <section className='landing'>
       <div className='dark-overlay'>
         <div className='landing-inner'>
-          <h1 className='x-large'>Post Project Manager</h1>
+          <h1 className='x-large'>Project Manager</h1>
           <p className='lead'>
             A Post Project Review is a very useful and powerful way of adding a
             continuous improvements.
